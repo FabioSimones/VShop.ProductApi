@@ -1,17 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
-namespace VShop.Web.Models
+namespace VShop.Web.Models;
+
+public class ProductViewModel
 {
-    public class ProductViewModel
-    {
-        public int Id { get; set; }        
-        public string? Name { get; set; }
-        public string? Description { get; set; }
-        public decimal Price { get; set; }
-        public long Stock { get; set; }
-        public string? ImageURL { get; set; }
-        public string? CategoryName { get; set; }
-        public int CategoryId { get; set; }
-    }
+    public int Id { get; set; }
+
+    [Required]
+    public string? Name { get; set; }
+
+    [Required]
+    public string? Description { get; set; }
+
+    [Required]
+    public decimal Price { get; set; }
+
+    [Required]
+    public string? ImageURL { get; set; }
+
+    [Required]
+    public long Stock { get; set; }
+
+    public string? CategoryName { get; set; }
+
+    [Display(Name = "Categorias")]
+    public int CategoryId { get; set; }
 }
