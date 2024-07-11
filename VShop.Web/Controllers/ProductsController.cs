@@ -1,117 +1,115 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VShop.Web.Models;
 using VShop.Web.Roles;
 using VShop.Web.Services.Interfaces;
 
-namespace VShop.Web.Controllers
+namespace VShop.Web.Controllers;
+
+[Authorize(Roles = Role.Admin)]
+public class ProductsController : Controller
 {
-    public class ProductsController : Controller
+    private readonly IProductService _productService;
+    private readonly ICategoryService _categoryService;
+    private readonly IWebHostEnvironment _webHostEnvironment;
+    public ProductsController(IProductService productService,
+                            ICategoryService categoryService,
+                            IWebHostEnvironment webHostEnvironment)
     {
-        private readonly IProductService _productService;
-        private readonly ICategoryService _categoryService;
+        _productService = productService;
+        _categoryService = categoryService;
+        _webHostEnvironment = webHostEnvironment;
+    }
 
-        public ProductsController(IProductService productService, ICategoryService categoryService)
-        {
-            _productService = productService;
-            _categoryService = categoryService;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductViewModel>>> Index()
-        {
-            
-            var result = await _productService.GetAllProducts(await GetAccessToken());
-
-            if (result is null)
-                return View("Error");
-
-            return View(result);
-        }
-
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ProductViewModel>>> Index()
+    {
         
+        var result = await _productService.GetAllProducts(await GetAccessToken());
 
-        [HttpGet]
-        public async Task<ActionResult> CreateProduct()
+        if (result is null)
+            return View("Error");
+
+        return View(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> CreateProduct()
+    {
+        ViewBag.CategoryId = new SelectList(await _categoryService.GetAllCategories(await GetAccessToken()), "CategoryId", "Name");
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateProduct(ProductViewModel productVM)
+    {
+        if (ModelState.IsValid)
         {
-            ViewBag.CategoryId = new SelectList(await _categoryService.GetAllCategories(await GetAccessToken()), "CategoryId", "Name");
-            return View();
-        }
+            var result = await _productService.CreateProduct(productVM, await GetAccessToken());
 
-        [HttpPost]
-        [Authorize]
-        public async Task<ActionResult> CreateProduct(ProductViewModel productVM)
+            if (result != null)
+                return RedirectToAction(nameof(Index));
+        }
+        else
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _productService.CreateProduct(productVM, await GetAccessToken());
-
-                if(result != null)
-                    return RedirectToAction(nameof(Index));
-                
-            }
-            else
-            {
-                ViewBag.CategoryId = new SelectList(await _categoryService.GetAllCategories(await GetAccessToken()), "CategoryId", "Name");
-            }
-            return View(productVM);
+            ViewBag.CategoryId = new SelectList(await
+                                 _categoryService.GetAllCategories(await GetAccessToken()), "CategoryId", "Name");
         }
+        return View(productVM);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult> UpdateProduct(int id)
+    [HttpGet]
+    public async Task<IActionResult> UpdateProduct(int id)
+    {
+        ViewBag.CategoryId = new SelectList(await
+                           _categoryService.GetAllCategories(await GetAccessToken()), "CategoryId", "Name");
+
+        var result = await _productService.FindProductById(id, await GetAccessToken());
+
+        if (result is null)
+            return View("Error");
+
+        return View(result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateProduct(ProductViewModel productVM)
+    {
+        if (ModelState.IsValid)
         {
-            ViewBag.CategoryId = new SelectList(await _categoryService.GetAllCategories(await GetAccessToken()), "CategoryId", "Name");
+            var result = await _productService.UpdateProduct(productVM, await GetAccessToken());
 
-            var result = await _productService.FindProductById(id, await GetAccessToken());
-
-            if (result is null)
-                return View("Error");
-            return View(result);
+            if (result is not null)
+                return RedirectToAction(nameof(Index));
         }
+        return View(productVM);
+    }
 
-        [HttpPost]
-        [Authorize]
-        public async Task<ActionResult> UpdateProduct(ProductViewModel productVM)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _productService.UpdateProduct(productVM, await GetAccessToken());
+    [HttpGet]
+    public async Task<ActionResult<ProductViewModel>> DeleteProduct(int id)
+    {
+        var result = await _productService.FindProductById(id, await GetAccessToken());
 
-                if (result is not null)
-                    return RedirectToAction(nameof(Index));
-            }
-            return View(productVM);
-        }
+        if (result is null)
+            return View("Error");
 
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<ProductViewModel>> DeleteProduct(int id)
-        {
-            var result = await _productService.FindProductById(id, await GetAccessToken());
+        return View(result);
+    }
 
-            if(result is null)
-                return View("Error");
-            return View(result);
-        }
+    [HttpPost(), ActionName("DeleteProduct")]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var result = await _productService.DeleteProductById(id, await GetAccessToken());
 
-        [HttpPost(), ActionName("DeleteProduct")]
-        [Authorize(Roles = Role.Admin)]
-        public async Task<ActionResult> DeleteConfirmed(int id)
-        {
-            var result = await _productService.DeleteProductById(id, await GetAccessToken());
+        if (!result)
+            return View("Error");
 
-            if(!result)
-                return View("Error");
-
-            return RedirectToAction("Index");
-        }
-
-        private async Task<string> GetAccessToken()
-        {
-            return await HttpContext.GetTokenAsync("access_token");
-        }
+        return RedirectToAction("Index");
+    }
+    private async Task<string> GetAccessToken()
+    {
+        return await HttpContext.GetTokenAsync("access_token");
     }
 }

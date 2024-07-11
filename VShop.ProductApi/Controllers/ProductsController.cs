@@ -1,75 +1,81 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VShop.ProductApi.DTOs;
 using VShop.ProductApi.Roles;
 using VShop.ProductApi.Services;
 
-namespace VShop.ProductApi.Controllers
+namespace VShop.ProductApi.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class ProductsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
-    public class ProductsController : ControllerBase
+    private readonly IProductService _productService;
+    public ProductsController(IProductService productService)
     {
-        private readonly IProductService _productService;
+        _productService = productService;
+    }
 
-        public ProductsController(IProductService productService)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ProductDTO>>> Get()
+    {
+        var produtosDto = await _productService.GetProducts();
+        if (produtosDto == null)
         {
-            _productService = productService;
+            return NotFound("Products not found");
         }
+        return Ok(produtosDto);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> Get()
+    [HttpGet("{id}", Name = "GetProduct")]
+    public async Task<ActionResult<ProductDTO>> Get(int id)
+    {
+        var produtoDto = await _productService.GetProductById(id);
+        if (produtoDto == null)
         {
-            var productsDTO = await _productService.GetProducts();
-            if (productsDTO == null)
-                return NotFound("Products not found");
-
-            return Ok(productsDTO);
+            return NotFound("Product not found");
         }
+        return Ok(produtoDto);
+    }
 
-        [HttpGet("{id:int}", Name = "GetProduct")]
-        public async Task<ActionResult<ProductDTO>> GetById(int id)
+    [HttpPost]
+    [Authorize(Roles = Role.Admin)]
+    public async Task<ActionResult> Post([FromBody] ProductDTO produtoDto)
+    {
+        if (produtoDto == null)
+            return BadRequest("Data Invalid");
+
+        await _productService.AddProduct(produtoDto);
+
+        return new CreatedAtRouteResult("GetProduct",
+            new { id = produtoDto.Id }, produtoDto);
+    }
+
+    [HttpPut]
+    [Authorize(Roles = Role.Admin)]
+    public async Task<ActionResult<ProductDTO>> Put([FromBody] ProductDTO produtoDto)
+    {
+        if (produtoDto == null)
+            return BadRequest("Data invalid");
+
+        await _productService.UpdateProduct(produtoDto);
+
+        return Ok(produtoDto);
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = Role.Admin)]
+    public async Task<ActionResult<ProductDTO>> Delete(int id)
+    {
+        var produtoDto = await _productService.GetProductById(id);
+
+        if (produtoDto == null)
         {
-            var productsDTO = await _productService.GetProductById(id);
-            if (productsDTO == null)
-                return NotFound("Product not found");
-
-            return Ok(productsDTO);
+            return NotFound("Product not found");
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Post([FromBody] ProductDTO productDTO)
-        {
-            if (productDTO == null)
-                return BadRequest("Invalid Data");
+        await _productService.RemoveProduct(id);
 
-            await _productService.AddProduct(productDTO);
-
-            return new CreatedAtRouteResult("GetProduct", new { id = productDTO.Id }, productDTO);
-        }
-
-        [HttpPut()]
-        public async Task<ActionResult> Put([FromBody] ProductDTO productDTO)
-        {            
-            if (productDTO == null)
-                return BadRequest("Data invalid.");
-
-            await _productService.UpdateProduct(productDTO);
-            return Ok(productDTO);
-        }
-
-        [HttpDelete("{id:int}")]
-        [Authorize(Roles = Role.Admin)]
-        public async Task<ActionResult<CategoryDTO>> Delete(int id)
-        {
-            var productDTO = await _productService.GetProductById(id);
-            if (productDTO == null)
-                return NotFound("Category not found.");
-
-            await _productService.RemoveProduct(id);
-            return Ok(productDTO);
-        }
+        return Ok(produtoDto);
     }
 }
