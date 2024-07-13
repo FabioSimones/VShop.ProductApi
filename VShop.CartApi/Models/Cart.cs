@@ -1,4 +1,6 @@
-﻿namespace VShop.CartApi.Models
+﻿using VShop.CartApi.DTOs;
+
+namespace VShop.CartApi.Models
 {
     public class Cart
     {
