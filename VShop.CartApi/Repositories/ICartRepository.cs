@@ -1,15 +1,12 @@
 ﻿using VShop.CartApi.DTOs;
 
-namespace VShop.CartApi.Repositories
-{
-    public interface ICartRepository
-    {
-        Task<CartDTO> GetCartByUserIdAsync(string userId);
-        Task<CartDTO> UpdateCartAsync(CartDTO cart);
-        Task<bool> CleanCartAsync(string userId);
-        Task<bool> DeleteItemCartAsync(int cartItemId);
+namespace VShop.CartApi.Repositories;
 
-        Task<bool> ApplyCouponAsync(string userId, string couponCode);
-        Task<bool> DeleteCouponAsync(string userId);
-    }
+public interface ICartRepository
+{
+    Task<CartDTO> GetCartByUserIdAsync(string userId);
+    Task<CartDTO> UpdateCartAsync(CartDTO cart);
+    Task<bool> CleanCartAsync(string userId);
+    Task<bool> DeleteItemCartAsync(int cartItemId);
+
 }

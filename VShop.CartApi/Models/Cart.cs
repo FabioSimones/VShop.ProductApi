@@ -1,10 +1,7 @@
-﻿using VShop.CartApi.DTOs;
+﻿namespace VShop.CartApi.Models;
 
-namespace VShop.CartApi.Models
+public class Cart
 {
-    public class Cart
-    {
-        public CartHeader CartHeader { get; set; } = new CartHeader();
-        public IEnumerable<CartItem> CartItems { get; set; } = Enumerable.Empty<CartItem>();
-    }
+    public CartHeader CartHeader { get; set; } = new CartHeader();
+    public IEnumerable<CartItem> CartItems { get; set; } = Enumerable.Empty<CartItem>();
 }

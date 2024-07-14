@@ -103,7 +103,7 @@ public class CartRepository : ICartRepository
         //Se CartHeader não é null
         //verifica se CartItems possui o mesmo produto
         var cartItem = await _context.CartItems.AsNoTracking().FirstOrDefaultAsync(
-                               p => p.ProductId == cartDto.CartItemsDTO.FirstOrDefault()
+                               p => p.ProductId == cartDto.CartItems.FirstOrDefault()
                                .ProductId && p.CartHeaderId == cartHeader.Id);
 
         if (cartItem is null)
@@ -144,7 +144,7 @@ public class CartRepository : ICartRepository
     {
         //Verifica se o produto ja foi salvo senão salva
         var product = await _context.Products.FirstOrDefaultAsync(p => p.Id ==
-                            cartDto.CartItemsDTO.FirstOrDefault().ProductId);
+                            cartDto.CartItems.FirstOrDefault().ProductId);
 
         //salva o produto senão existe no bd
         if (product is null)
@@ -154,13 +154,5 @@ public class CartRepository : ICartRepository
         }
     }
 
-    public Task<bool> ApplyCouponAsync(string userId, string couponCode)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> DeleteCouponAsync(string userId)
-    {
-        throw new NotImplementedException();
-    }
+    
 }

@@ -15,7 +15,7 @@ namespace VShop.CartApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.31")
+                .HasAnnotation("ProductVersion", "6.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("VShop.CartApi.Models.CartHeader", b =>
@@ -55,6 +55,8 @@ namespace VShop.CartApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartHeaderId");
 
                     b.HasIndex("ProductId");
 
@@ -100,11 +102,19 @@ namespace VShop.CartApi.Migrations
 
             modelBuilder.Entity("VShop.CartApi.Models.CartItem", b =>
                 {
+                    b.HasOne("VShop.CartApi.Models.CartHeader", "CartHeader")
+                        .WithMany()
+                        .HasForeignKey("CartHeaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VShop.CartApi.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CartHeader");
 
                     b.Navigation("Product");
                 });
