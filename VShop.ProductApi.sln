@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{68CA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VShop.IdentityServer", "VShop.IdentityServer\VShop.IdentityServer.csproj", "{4058112D-CBB2-451A-8F3F-3EEB453D815D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VShop.CartApi", "VShop.CartApi\VShop.CartApi.csproj", "{0F7C2D35-E383-4C78-9CF8-2E338693A554}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VShop.CartApi", "VShop.CartApi\VShop.CartApi.csproj", "{0F7C2D35-E383-4C78-9CF8-2E338693A554}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VShop.DiscountApi", "VShop.DiscountApi\VShop.DiscountApi.csproj", "{A281AE52-6F35-493C-B9B0-C47326347178}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{0F7C2D35-E383-4C78-9CF8-2E338693A554}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F7C2D35-E383-4C78-9CF8-2E338693A554}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F7C2D35-E383-4C78-9CF8-2E338693A554}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A281AE52-6F35-493C-B9B0-C47326347178}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A281AE52-6F35-493C-B9B0-C47326347178}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A281AE52-6F35-493C-B9B0-C47326347178}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A281AE52-6F35-493C-B9B0-C47326347178}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{3330253E-9253-450B-A78E-2B960F514562} = {F3B55535-E538-4A3A-B2F8-9F7B7B41DA12}
 		{4058112D-CBB2-451A-8F3F-3EEB453D815D} = {68CA0004-DA73-4428-B046-5ADA180C6985}
 		{0F7C2D35-E383-4C78-9CF8-2E338693A554} = {68CA0004-DA73-4428-B046-5ADA180C6985}
+		{A281AE52-6F35-493C-B9B0-C47326347178} = {68CA0004-DA73-4428-B046-5ADA180C6985}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E4F622FE-AD2E-46EC-AAA7-8F80A2EFA16A}
